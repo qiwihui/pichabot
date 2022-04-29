@@ -8,8 +8,10 @@ from dotenv import load_dotenv
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+handler = logging.FileHandler(
+    filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
 load_dotenv()
@@ -18,6 +20,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 
 
 client = discord.Client()
+
 
 @client.event
 async def on_ready():
@@ -48,7 +51,7 @@ async def on_message(message):
 
     if message.content == '!hello':
         await message.channel.send('Hello!')
-    
+
     if message.content == '!ping':
         await message.channel.send('Pong!')
 
@@ -65,5 +68,13 @@ async def on_message(message):
         response = random.choice(brooklyn_99_quotes)
         await message.channel.send(response)
 
+
+@client.event
+async def on_error(event, *args, **kwargs):
+    with open('err.log', 'a') as f:
+        if event == 'on_message':
+            f.write(f'Unhandled message: {args[0]}\n')
+        else:
+            raise
 
 client.run(TOKEN)
