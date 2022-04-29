@@ -36,6 +36,7 @@ async def roll(ctx, number_of_dice: int, number_of_sides: int):
 
 
 @bot.command(name='ceate-channel', help='Creates a new text channel')
+@commands.has_role('admin')
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild
     existing_channel = discord.utils.get(guild.channels, name=channel_name)
