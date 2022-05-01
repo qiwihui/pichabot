@@ -1,12 +1,25 @@
 # bot.py
 import os
 import random
+import json
+import string
 import discord
+import logging
+from pathlib import Path
 from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+
+# logging
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(
+    filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 bot = commands.Bot(command_prefix='!')
 
@@ -26,16 +39,41 @@ async def nine_nine(ctx):
     await ctx.send(response)
 
 
-@bot.command(name='roll_dice', help='Simulates rolling dice')
-async def roll(ctx, number_of_dice: int, number_of_sides: int):
-    dice = [
-        str(random.choice(range(1, number_of_sides + 1)))
-        for _ in range(number_of_dice)
-    ]
-    await ctx.send(', '.join(dice))
+@bot.command(name='connect', help='Connect starcoin wallet address')
+async def connect(ctx, wallet_address: str):
+    session = ''.join(random.choice(string.ascii_letters) for _ in range(10))
+    url = f"http://localhost:9022/?session={session}"
+    db = {}
+    if Path("db.json").exists():
+        with open("db.json") as f:
+            db = json.load(f)
+    db[str(ctx.author.id)] = {
+        "session": session,
+        "wallet_address": wallet_address,
+        "name": ctx.author.name,
+        "verified": False,
+    }
+    with open('db.json', 'w') as f:
+        json.dump(db, f)
+    await ctx.send(f"Check {url} to verify your wallet address")
 
 
-@bot.command(name='ceate-channel', help='Creates a new text channel')
+@bot.command(name='getme', help='Get your information')
+async def get_me(ctx):
+    db = {}
+    if Path("db.json").exists():
+        with open("db.json") as f:
+            db = json.load(f)
+    author_id = str(ctx.author.id)
+    if author_id in db and db[author_id]['verified']:
+        await ctx.send(f"Verified: {db[author_id]['verified']}\nWallet Address: {db[author_id]['wallet_address']}\nName: {db[author_id]['name']}")
+    elif author_id in db:
+        await ctx.send(f"Verified: {db[author_id]['verified']}\nName: {db[author_id]['name']}")
+    else:
+        await ctx.send("You are not connected yet")
+
+
+@bot.command(name='create-channel', help='Creates a new text channel')
 @commands.has_role('admin')
 async def create_channel(ctx, channel_name: str):
     guild = ctx.guild

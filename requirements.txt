@@ -1,2 +1,5 @@
 discord.py
 python-dotenv
+flask
+flask-restful
+starcoin-sdk-python
