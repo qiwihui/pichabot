@@ -42,7 +42,7 @@ async def nine_nine(ctx):
 @bot.command(name='connect', help='Connect starcoin wallet address')
 async def connect(ctx, wallet_address: str):
     session = ''.join(random.choice(string.ascii_letters) for _ in range(10))
-    url = f"http://localhost:9022/?session={session}"
+    url = f"http://ov.qiwihui.com/?session={session}"
     db = {}
     if Path("db.json").exists():
         with open("db.json") as f:
