@@ -48,7 +48,7 @@ class Verify(Resource):
         return {'status': 'fail'}
 
 
-api.add_resource(Verify, '/verify')
+api.add_resource(Verify, '/api/verify')
 
 if __name__ == '__main__':
     app.run(debug=True)
