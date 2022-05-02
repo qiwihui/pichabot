@@ -1,11 +1,13 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_cors import CORS
 from starcoin.sdk import utils
 from pathlib import Path
 import json
 from typing import Optional
 
 app = Flask(__name__)
+cors = CORS(app)
 api = Api(app)
 
 
