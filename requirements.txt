@@ -4,3 +4,4 @@ flask
 flask-restful
 starcoin-sdk-python
 flask-cors
+gunicorn
