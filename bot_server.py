@@ -28,6 +28,7 @@ def hex_list_to_str(hex_list: list) -> str:
 
 
 class Verify(Resource):
+
     def post(self):
         json_data = request.get_json(force=True)
         sign = json_data['sign']
@@ -39,7 +40,7 @@ class Verify(Resource):
                 db = json.load(f)
         session = hex_list_to_str(signed_message.message.value)
         user_id = get_user_from_session(session)
-        
+
         if db[user_id]['wallet_address'].lower() == public_address.lower():
             with open('db.json', 'w') as f:
                 db[user_id]['verified'] = True
